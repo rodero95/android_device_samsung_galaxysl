@@ -27,6 +27,9 @@
     <!-- There is no charging LED. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
+    <!-- Our amoled doesn't animate well. -->
+    <bool name="config_animateScreenLights">false</bool>
+
     <!-- disable menu hard key on Latona in non-pattern lockscreen -->
     <bool name="config_disableMenuKeyInLockScreen">true</bool>
 
@@ -140,7 +143,7 @@
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
          should be empty.  An example would be "softap.*" -->
     <!--<string-array translatable="false" name="config_tether_wifi_regexs">
-        <item>"tiwlan0"</item>
+	<item>"wlan\\d"</item>
     </string-array>-->
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable

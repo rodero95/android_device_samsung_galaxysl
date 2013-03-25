@@ -11,7 +11,7 @@ TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_ARCH_VARIANT_CPU := cortex-a8
 TARGET_ARCH_VARIANT_FPU := neon
 ARCH_ARM_HAVE_TLS_REGISTER := true
-COMMON_GLOBAL_CFLAGS += -DOMAP_COMPAT -DOMAP_ENHANCEMENT -DTARGET_OMAP3
+COMMON_GLOBAL_CFLAGS += -DOMAP_ENHANCEMENT -DTARGET_OMAP3 -DOMAP_ENHANCEMENT_CPCAM -DOMAP_ENHANCEMENT_VTC -DUSE_FENCE_SYNC
 
 TARGET_BOOTANIMATION_PRELOAD := true
 TARGET_BOOTANIMATION_TEXTURE_CACHE := true
@@ -29,10 +29,12 @@ BOARD_KERNEL_CMDLINE := console=ttySAC2,115200 consoleblank=0
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 4096
 
+TARGET_SPECIFIC_HEADER_PATH := device/samsung/galaxysl/include
+
 BOARD_CUSTOM_BOOTIMG_MK := device/samsung/galaxysl/shbootimg.mk
 
 # Inline kernel building config
-TARGET_KERNEL_CONFIG := latona_galaxysl_defconfig
+TARGET_KERNEL_CONFIG := latona_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/latona
 TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
@@ -53,29 +55,18 @@ BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_HAS_LARGE_FILESYSTEM := true
 
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/usb_mass_storage/lun%d/file"
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/class/android_usb/android0/f_mass_storage/lun%d/file"
 
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/galaxysl
 
-# Vibrator
-BOARD_HAS_VIBRATOR_IMPLEMENTATION := ../../device/samsung/galaxysl/vibrator/tspdrv.c
-
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
+BOARD_WPAN_DEVICE := true
 
 # Egl
 BOARD_EGL_CFG := device/samsung/galaxysl/egl.cfg
 USE_OPENGL_RENDERER := true
-
-# TARGET_DISABLE_TRIPLE_BUFFERING can be used to disable triple buffering
-# on per target basis. On crespo it is possible to do so in theory
-# to save memory, however, there are currently some limitations in the
-# OpenGL ES driver that in conjunction with disable triple-buffering
-# would hurt performance significantly (see b/6016711)
-TARGET_DISABLE_TRIPLE_BUFFERING := false
-
-BOARD_ALLOW_EGL_HIBERNATION := true
 
 # OMX Stuff
 HARDWARE_OMX := true
@@ -99,16 +90,32 @@ BOARD_FM_DEVICE := si4709
 # Camera
 BOARD_CAMERA_LIBRARIES := libcamera
 
-# Wifi related defines
-USES_TI_WL1271 := true
-BOARD_WPA_SUPPLICANT_DRIVER := CUSTOM
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := libCustomWifi
-BOARD_WLAN_DEVICE           := wl1271
-#BOARD_SOFTAP_DEVICE         := wl1271 // missing libhostapdcli
-WPA_SUPPLICANT_VERSION      := VER_0_6_X
-WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/tiwlan_drv.ko"
-WIFI_DRIVER_MODULE_NAME     := "tiwlan_drv"
-WIFI_FIRMWARE_LOADER        := "wlan_loader"
-AP_CONFIG_DRIVER_WILINK     := true
+# Connectivity - Wi-Fi
+USES_TI_MAC80211 := true
+ifdef USES_TI_MAC80211
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_wl12xx
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_WLAN_DEVICE := wl12xx_mac80211
+BOARD_SOFTAP_DEVICE := wl12xx_mac80211
+WIFI_DRIVER_MODULE_PATH := "/system/lib/modules/wl12xx_sdio.ko"
+WIFI_DRIVER_MODULE_NAME := "wl12xx_sdio"
+WIFI_FIRMWARE_LOADER := ""
+COMMON_GLOBAL_CFLAGS += -DUSES_TI_MAC80211
+endif
 
-TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003,GT-I9003L
+TARGET_MODULES_SOURCE := "hardware/ti/wlan/mac80211/compat_wl12xx"
+
+WIFI_MODULES:
+	make -C $(TARGET_MODULES_SOURCE) KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=$(TARGET_ARCH) $(ARM_CROSS_COMPILE)
+	mv $(KERNEL_OUT)/lib/crc7.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/compat/compat.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/mac80211/mac80211.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx_sdio.ko $(KERNEL_MODULES_OUT)
+
+TARGET_KERNEL_MODULES := WIFI_MODULES
+
+TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003,GT-i9003L

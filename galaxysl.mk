@@ -14,7 +14,6 @@
 
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
-	device/samsung/galaxysl/etc/asound.conf:system/etc/asound.conf \
 	device/samsung/galaxysl/etc/gps.conf:system/etc/gps.conf \
 	device/samsung/galaxysl/etc/gps.xml:system/vendor/etc/gps.xml \
 	device/samsung/galaxysl/etc/vold.fstab:system/etc/vold.fstab \
@@ -77,15 +76,6 @@ PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/etc/audio/codec/VtCallSpk.ini:system/etc/audio/codec/VtCallSpk.ini \
 	device/samsung/galaxysl/etc/audio/codec/VtCallSpkAmp.ini:system/etc/audio/codec/VtCallSpkAmp.ini
 
-# wifi configuration files
-PRODUCT_COPY_FILES += \
-    device/samsung/galaxysl/etc/wifi/firmware.bin:system/etc/wifi/firmware.bin \
-    device/samsung/galaxysl/etc/wifi/tiwlan_plt.ini:system/etc/wifi/tiwlan_plt.ini \
-    device/samsung/galaxysl/etc/wifi/softap/ap_firmware.bin:system/etc/wifi/softap/ap_firmware.bin \
-    device/samsung/galaxysl/etc/wifi/softap/hostapd.conf:system/etc/wifi/softap/hostapd.conf \
-    device/samsung/galaxysl/etc/wifi/softap/tiwlan_ap.ini:system/etc/wifi/softap/tiwlan_ap.ini \
-    device/samsung/galaxysl/etc/wifi/tiwlan.ini:system/etc/wifi/tiwlan.ini
- 
 # configuration files
 PRODUCT_COPY_FILES += \
     device/samsung/galaxysl/etc/media_profiles.xml:system/etc/media_profiles.xml \
@@ -97,14 +87,13 @@ PRODUCT_COPY_FILES += \
 
 # Prebuilt kl keymaps
 PRODUCT_COPY_FILES += \
-       device/samsung/galaxysl/usr/keylayout/sec_jack.kl:system/usr/keylayout/sec_jack.kl \
-       device/samsung/galaxysl/usr/keylayout/sec_key.kl:system/usr/keylayout/sec_key.kl \
-       device/samsung/galaxysl/usr/keylayout/sec_power_key.kl:system/usr/keylayout/sec_power_key.kl \
-       device/samsung/galaxysl/usr/keylayout/sec_touchscreen.kl:system/usr/keylayout/sec_touchscreen.kl
+       device/samsung/galaxysl/usr/keylayout/twl4030-keypad.kl:system/usr/keylayout/twl4030-keypad.kl \
+       device/samsung/galaxysl/usr/keylayout/zeus_key.kl:system/usr/keylayout/zeus_key.kl \
+       device/samsung/galaxysl/usr/keylayout/latona_touchscreen.kl:system/usr/keylayout/latona_touchscreen.kl
  
  # IDC file for Touchscreen Calibration
 PRODUCT_COPY_FILES += \
-       device/samsung/galaxysl/usr/idc/sec_touchscreen.idc:system/usr/idc/sec_touchscreen.idc
+       device/samsung/galaxysl/usr/idc/latona_touchscreen.idc:system/usr/idc/latona_touchscreen.idc
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
@@ -131,8 +120,10 @@ PRODUCT_PACKAGES := \
     power.latona \
     com.android.future.usb.accessory \
     bdaddr_read \
+    uim-sysfs \
     bootmenu_busybox \
     SamsungServiceMode \
+    hostapd.conf \
     DeviceParts
 
 #Filesystem binaries
@@ -154,23 +145,44 @@ PRODUCT_PACKAGES += camera.latona
 
 # OMX stuff
 PRODUCT_PACKAGES += \
-    libLCML \
+    libstagefrighthw \
     libbridge \
     cexec.out \
-    libOMX.TI.AAC.decode \
-    libOMX.TI.AAC.encode \
-    libOMX.TI.AMR.decode \
-    libOMX.TI.AMR.encode \
-    libOMX.TI.JPEG.decoder \
-    libOMX.TI.JPEG.encoder \
-    libOMX.TI.MP3.decode \
+    libPERF \
+    libOMX_Core \
+    libLCML \
+    libion \
+    libtiutils \
+    libomap_mm_library_jni \
     libOMX.TI.Video.Decoder \
     libOMX.TI.Video.encoder \
-    libOMX.TI.VPP \
     libOMX.TI.WBAMR.decode \
-    libOMX.TI.WBAMR.encode \
+    libOMX.TI.AAC.encode \
+    libOMX.TI.G722.decode \
+    libOMX.TI.MP3.decode \
     libOMX.TI.WMA.decode \
-    libOMX_Core \
+    libOMX.TI.Video.encoder \
+    libOMX.TI.WBAMR.encode \
+    libOMX.TI.G729.encode \
+    libOMX.TI.AAC.decode \
+    libOMX.TI.VPP \
+    libOMX.TI.G711.encode \
+    libOMX.TI.JPEG.encoder \
+    libOMX.TI.G711.decode \
+    libOMX.TI.ILBC.decode \
+    libOMX.TI.ILBC.encode \
+    libOMX.TI.AMR.encode \
+    libOMX.TI.G722.encode \
+    libOMX.TI.JPEG.decoder \
+    libOMX.TI.G726.encode \
+    libOMX.TI.G729.decode \
+    libOMX.TI.Video.Decoder \
+    libOMX.TI.AMR.decode \
+    libOMX.TI.G726.decode
+
+# Script to edit the shipped nvs file to insert the device's assigned MAC
+# address
+PRODUCT_PACKAGES += store-mac-addr.sh
 
 # device specific overlays
 DEVICE_PACKAGE_OVERLAYS += device/samsung/galaxysl/overlay
@@ -184,17 +196,13 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # Note that the only such settings should be the ones that are too low-level to
 # be reachable from resources or other mechanisms.
 PRODUCT_PROPERTY_OVERRIDES += \
-       wifi.interface=tiwlan0 \
+       wifi.interface=wlan0 \
        wifi.supplicant_scan_interval=180 \
        ro.telephony.ril_class=SamsungExynos3RIL \
        ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
        mobiledata.interfaces=pdp0,eth0,gprs,ppp0 \
        dev.sfbootcomplete=0
 
-
-# Set default USB interface
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mass_storage
 
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
@@ -225,10 +233,6 @@ include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 # this file must pay attention to the fact that the first entry in the final
 # PRODUCT_LOCALES expansion must not be a density.
 PRODUCT_AAPT_CONFIG := normal hdpi
-
-# copy wifi module
-PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/modules/tiwlan_drv.ko:system/lib/modules/tiwlan_drv.ko
 
 # copy the filesystem converter
 PRODUCT_COPY_FILES += \
