@@ -24,6 +24,7 @@ PRODUCT_COPY_FILES := \
 PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/init.latona.rc:root/init.latona.rc \
 	device/samsung/galaxysl/init.latona.usb.rc:root/init.latona.usb.rc \
+	device/samsung/galaxysl/fstab.latona:root/fstab.latona \
 	device/samsung/galaxysl/lpm.rc:root/lpm.rc \
 	device/samsung/galaxysl/lpm.rc:recovery/root/lpm.rc \
 	device/samsung/galaxysl/ueventd.latona.rc:root/ueventd.latona.rc \
@@ -126,6 +127,8 @@ PRODUCT_COPY_FILES += \
 # Packages
 PRODUCT_PACKAGES := \
     lights.latona \
+    sensors.latona \
+    power.latona \
     com.android.future.usb.accessory \
     bdaddr_read \
     bootmenu_busybox \
@@ -145,9 +148,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/libaudio/audio_policy.conf:system/etc/audio_policy.conf
-
-# HWComposer
-PRODUCT_PACKAGES += hwcomposer.default
 
 #Camera
 PRODUCT_PACKAGES += camera.latona
@@ -202,21 +202,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
         ro.com.google.locationfeatures=1 \
         ro.com.google.networklocation=1
 
-# we have enough storage space to hold precise GC data
-PRODUCT_TAGS += \
-        dalvik.gc.type-precise
-
 # Our cache partition isn't big enough for dalvik-cache.
 PRODUCT_PROPERTY_OVERRIDES += \
         dalvik.vm.dexopt-data-only=1
 
-# Extended JNI checks
-# The extended JNI checks will cause the system to run more slowly, but they can spot a variety of nasty bugs
-# before they have a chance to cause problems.
-# Default=true for development builds, set by android buildsystem.
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.kernel.android.checkjni=0 \
-    dalvik.vm.checkjni=false
 
 # Override /proc/sys/vm/dirty_ratio on UMS
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -235,21 +224,11 @@ include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 # the the build-time selection of resources). The product definitions including
 # this file must pay attention to the fact that the first entry in the final
 # PRODUCT_LOCALES expansion must not be a density.
-PRODUCT_LOCALES := hdpi
+PRODUCT_AAPT_CONFIG := normal hdpi
 
-# other kernel modules not in ramdisk
-PRODUCT_COPY_FILES += $(foreach module,\
-	$(filter-out $(RAMDISK_MODULES),$(wildcard device/samsung/galaxysl/modules/*.ko)),\
-	$(module):system/lib/modules/$(notdir $(module)))
-
-ifeq ($(TARGET_PREBUILT_KERNEL),)
-    LOCAL_KERNEL := device/samsung/galaxysl/kernel
-else
-    LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
-endif
-
+# copy wifi module
 PRODUCT_COPY_FILES += \
-    $(LOCAL_KERNEL):kernel
+	device/samsung/galaxysl/modules/tiwlan_drv.ko:system/lib/modules/tiwlan_drv.ko
 
 # copy the filesystem converter
 PRODUCT_COPY_FILES += \
@@ -257,7 +236,11 @@ PRODUCT_COPY_FILES += \
 
 # bml_over_mtd
 PRODUCT_COPY_FILES += \
-device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
+	device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
+
+# wifi MAC script
+PRODUCT_COPY_FILES += \
+	device/samsung/galaxysl/wifimac/fix_mac.sh:system/bin/fix_mac.sh
 
 # See comment at the top of this file. This is where the other
 # half of the device-specific product definition file takes care

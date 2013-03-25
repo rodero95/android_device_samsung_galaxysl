@@ -7,25 +7,33 @@ TARGET_BOOTLOADER_BOARD_NAME := latona
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_ARCH_VARIANT_CPU := cortex-a8
+TARGET_ARCH_VARIANT_FPU := neon
 ARCH_ARM_HAVE_TLS_REGISTER := true
 COMMON_GLOBAL_CFLAGS += -DOMAP_COMPAT -DOMAP_ENHANCEMENT -DTARGET_OMAP3
 
 TARGET_BOOTANIMATION_PRELOAD := true
+TARGET_BOOTANIMATION_TEXTURE_CACHE := true
+TARGET_BOOTANIMATION_USE_RGB565 := true
 
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 
 TARGET_PROVIDES_INIT_TARGET_RC := true
-TARGET_RECOVERY_INITRC := device/samsung/galaxysl/recovery.rc
 
-BOARD_NAND_PAGE_SIZE := 4096 -s 128
+BOARD_NAND_PAGE_SIZE := 4096
+BOARD_NAND_SPARE_SIZE := 128
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_CMDLINE := console=ttySAC2,115200 consoleblank=0
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 4096
 
 BOARD_CUSTOM_BOOTIMG_MK := device/samsung/galaxysl/shbootimg.mk
-TARGET_PREBUILT_KERNEL := device/samsung/galaxysl/kernel
+
+# Inline kernel building config
+TARGET_KERNEL_CONFIG := latona_galaxysl_defconfig
+TARGET_KERNEL_SOURCE := kernel/samsung/latona
+TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 # recovery
 BOARD_USES_MMCUTILS := true
@@ -33,7 +41,6 @@ BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_RECOVERY_PRE_COMMAND := "echo 1 > /cache/.startrecovery; sync;"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/galaxysl/recovery/recovery_keys.c
-BOARD_CUSTOM_GRAPHICS := ../../../device/samsung/galaxysl/recovery/graphics.c
 BOARD_USES_BML_OVER_MTD := true
 
 # fix this up by examining /proc/mtd on a running device
@@ -48,8 +55,7 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/usb_mass_storage/lun%d/file"
 
 # Releasetools
-TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT := ./device/samsung/galaxysl/releasetools/galaxysl_ota_from_target_files
-TARGET_RELEASETOOL_IMG_FROM_TARGET_SCRIPT := ./device/samsung/galaxysl/releasetools/galaxysl_img_from_target_files
+TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/galaxysl
 
 # Vibrator
 BOARD_HAS_VIBRATOR_IMPLEMENTATION := ../../device/samsung/galaxysl/vibrator/tspdrv.c
@@ -59,7 +65,6 @@ BOARD_HAVE_BLUETOOTH := true
 
 # Egl
 BOARD_EGL_CFG := device/samsung/galaxysl/egl.cfg
-COMMON_GLOBAL_CFLAGS += -DSURFACEFLINGER_FORCE_SCREEN_RELEASE
 USE_OPENGL_RENDERER := true
 
 # TARGET_DISABLE_TRIPLE_BUFFERING can be used to disable triple buffering
@@ -105,4 +110,4 @@ WIFI_DRIVER_MODULE_NAME     := "tiwlan_drv"
 WIFI_FIRMWARE_LOADER        := "wlan_loader"
 AP_CONFIG_DRIVER_WILINK     := true
 
-TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003
+TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003,GT-I9003L
