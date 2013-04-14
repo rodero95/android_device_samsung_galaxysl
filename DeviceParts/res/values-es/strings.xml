@@ -5,7 +5,7 @@
     <!-- Tabs -->
     <string name="category_general_title">General</string>
     <string name="category_screen_title">Pantalla</string>
-    <string name="category_advanced_title">Avanzado/string>
+    <string name="category_advanced_title">Avanzado</string>
 
     <!-- Screen -->
     <string name="seekbar_btn_default_title">Por defecto</string>
