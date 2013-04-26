@@ -11,6 +11,16 @@ TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_ARCH_VARIANT_CPU := cortex-a8
 TARGET_ARCH_VARIANT_FPU := neon
 ARCH_ARM_HAVE_TLS_REGISTER := true
+
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
+TARGET_arm_CFLAGS := -O3 -fomit-frame-pointer -fstrict-aliasing -funswitch-loops \
+                       -fmodulo-sched -fmodulo-sched-allow-regmoves
+TARGET_thumb_CFLAGS := -mthumb \
+                        -Os \
+                        -fomit-frame-pointer \
+                        -fstrict-aliasing
+
 COMMON_GLOBAL_CFLAGS += -DOMAP_COMPAT -DOMAP_ENHANCEMENT -DTARGET_OMAP3
 
 TARGET_BOOTANIMATION_PRELOAD := true
@@ -34,7 +44,6 @@ BOARD_CUSTOM_BOOTIMG_MK := device/samsung/galaxysl/shbootimg.mk
 # Inline kernel building config
 TARGET_KERNEL_CONFIG := latona_galaxysl_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/latona
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 # recovery
 BOARD_USES_MMCUTILS := true
@@ -105,11 +114,17 @@ USES_TI_WL1271 := true
 BOARD_WPA_SUPPLICANT_DRIVER := CUSTOM
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := libCustomWifi
 BOARD_WLAN_DEVICE           := wl1271
-#BOARD_SOFTAP_DEVICE         := wl1271 // missing libhostapdcli
 WPA_SUPPLICANT_VERSION      := VER_0_6_X
 WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/tiwlan_drv.ko"
 WIFI_DRIVER_MODULE_NAME     := "tiwlan_drv"
 WIFI_FIRMWARE_LOADER        := "wlan_loader"
+
 AP_CONFIG_DRIVER_WILINK     := true
+BOARD_SOFTAP_DEVICE         := wl1271
+USES_TI_MAC80211            := true
+WIFI_AP_DRIVER_MODULE_PATH  := "/system/lib/modules/tiap_drv.ko"
+WIFI_AP_DRIVER_MODULE_NAME  := tiap_drv
+WIFI_AP_FIRMWARE_LOADER     := wlan_ap_loader
+WIFI_AP_DRIVER_MODULE_ARG   := ""
 
 TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003,GT-I9003L
