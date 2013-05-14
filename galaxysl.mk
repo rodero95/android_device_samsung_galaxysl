@@ -131,6 +131,8 @@ PRODUCT_PACKAGES := \
     power.latona \
     com.android.future.usb.accessory \
     bdaddr_read \
+	uim-sysfs \
+	libbt-vendor \
     bootmenu_busybox \
     SamsungServiceMode \
     DeviceParts
