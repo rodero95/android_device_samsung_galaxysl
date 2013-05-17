@@ -185,6 +185,10 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += hostap
 
+# Script to edit the shipped nvs file to insert the device's assigned MAC
+# address
+PRODUCT_PACKAGES += store-mac-addr.sh
+
 # device specific overlays
 DEVICE_PACKAGE_OVERLAYS += device/samsung/galaxysl/overlay
 
@@ -244,14 +248,6 @@ PRODUCT_COPY_FILES += \
 # bml_over_mtd
 PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
-
-# wifi MAC script
-PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/wifimac/fix_mac.sh:system/bin/fix_mac.sh
-
-# hostap wrapper
-PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/hostap_wrapper.sh:system/bin/hostap_wrapper.sh 
 
 # See comment at the top of this file. This is where the other
 # half of the device-specific product definition file takes care
