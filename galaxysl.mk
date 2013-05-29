@@ -77,15 +77,6 @@ PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/etc/audio/codec/VtCallSpk.ini:system/etc/audio/codec/VtCallSpk.ini \
 	device/samsung/galaxysl/etc/audio/codec/VtCallSpkAmp.ini:system/etc/audio/codec/VtCallSpkAmp.ini
 
-# wifi configuration files
-PRODUCT_COPY_FILES += \
-    device/samsung/galaxysl/etc/wifi/firmware.bin:system/etc/wifi/firmware.bin \
-    device/samsung/galaxysl/etc/wifi/tiwlan_plt.ini:system/etc/wifi/tiwlan_plt.ini \
-    device/samsung/galaxysl/etc/wifi/softap/ap_firmware.bin:system/etc/wifi/softap/ap_firmware.bin \
-    device/samsung/galaxysl/etc/wifi/softap/hostapd.conf:system/etc/wifi/softap/hostapd.conf \
-    device/samsung/galaxysl/etc/wifi/softap/tiwlan_ap.ini:system/etc/wifi/softap/tiwlan_ap.ini \
-    device/samsung/galaxysl/etc/wifi/tiwlan.ini:system/etc/wifi/tiwlan.ini
- 
 # configuration files
 PRODUCT_COPY_FILES += \
     device/samsung/galaxysl/etc/media_profiles.xml:system/etc/media_profiles.xml \
@@ -115,6 +106,7 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.location.xml:system/etc/permissions/android.hardware.location.xml \
 	frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
 	frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
 	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
 	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
 	frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
@@ -132,8 +124,27 @@ PRODUCT_PACKAGES := \
     com.android.future.usb.accessory \
     bdaddr_read \
     bootmenu_busybox \
+	libnl_2 \
+	iw \
     SamsungServiceMode \
     DeviceParts
+
+# Wifi
+PRODUCT_PACKAGES += \
+    lib_driver_cmd_wl12xx \
+    dhcpcd.conf \
+    hostapd.conf \
+    wpa_supplicant.conf \
+    TQS_D_1.7.ini \
+    TQS_D_1.7_127x.ini \
+    crda \
+    regulatory.bin \
+    calibrator 
+
+# Wifi Direct and WPAN
+PRODUCT_PACKAGES += \
+    ti_wfd_libs \
+    ti-wpan-fw
 
 #Filesystem binaries
 PRODUCT_PACKAGES += \
@@ -186,7 +197,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # Note that the only such settings should be the ones that are too low-level to
 # be reachable from resources or other mechanisms.
 PRODUCT_PROPERTY_OVERRIDES += \
-       wifi.interface=tiwlan0 \
+       wifi.interface=wlan0 \
+	   softap.interface=wlan0 \
        wifi.supplicant_scan_interval=180 \
        ro.telephony.ril_class=SamsungExynos3RIL \
        ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
@@ -224,11 +236,6 @@ include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 # this file must pay attention to the fact that the first entry in the final
 # PRODUCT_LOCALES expansion must not be a density.
 PRODUCT_AAPT_CONFIG := normal hdpi
-
-# copy wifi modules
-PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/modules/tiwlan_drv.ko:system/lib/modules/tiwlan_drv.ko \
-	device/samsung/galaxysl/modules/tiap_drv.ko:system/lib/modules/tiap_drv.ko
 
 # copy the filesystem converter
 PRODUCT_COPY_FILES += \

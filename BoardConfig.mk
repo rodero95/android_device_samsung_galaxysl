@@ -110,21 +110,31 @@ BOARD_FM_DEVICE := si4709
 BOARD_CAMERA_LIBRARIES := libcamera
 
 # Wifi related defines
-USES_TI_WL1271 := true
-BOARD_WPA_SUPPLICANT_DRIVER := CUSTOM
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := libCustomWifi
-BOARD_WLAN_DEVICE           := wl1271
-WPA_SUPPLICANT_VERSION      := VER_0_6_X
-WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/tiwlan_drv.ko"
-WIFI_DRIVER_MODULE_NAME     := "tiwlan_drv"
-WIFI_FIRMWARE_LOADER        := "wlan_loader"
+USES_TI_MAC80211 := true
+WPA_SUPPLICANT_VERSION           := VER_0_8_X_TI
+BOARD_WPA_SUPPLICANT_DRIVER      := NL80211
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_wl12xx
+BOARD_HOSTAPD_DRIVER             := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB        := lib_driver_cmd_wl12xx
+PRODUCT_WIRELESS_TOOLS           := true
+BOARD_WLAN_DEVICE                := wl12xx_mac80211
+BOARD_SOFTAP_DEVICE              := wl12xx_mac80211
+WIFI_DRIVER_MODULE_PATH          := "/system/lib/modules/wl12xx_sdio.ko"
+WIFI_DRIVER_MODULE_NAME          := "wl12xx_sdio"
+WIFI_FIRMWARE_LOADER             := ""
+COMMON_GLOBAL_CFLAGS += -DUSES_TI_MAC80211
+BOARD_HOSTAPD_TIAP_ROOT     := system/wlan/ti/WiLink_AP
 
-AP_CONFIG_DRIVER_WILINK     := true
-BOARD_SOFTAP_DEVICE         := wl1271
-USES_TI_MAC80211            := true
-WIFI_AP_DRIVER_MODULE_PATH  := "/system/lib/modules/tiap_drv.ko"
-WIFI_AP_DRIVER_MODULE_NAME  := tiap_drv
-WIFI_AP_FIRMWARE_LOADER     := wlan_ap_loader
-WIFI_AP_DRIVER_MODULE_ARG   := ""
+WLAN_MODULES:
+	make clean -C hardware/ti/wlan/mac80211/compat_wl12xx
+	make -C hardware/ti/wlan/mac80211/compat_wl12xx KERNEL_DIR=$(KERNEL_OUT) KLIB=$(KERNEL_OUT) KLIB_BUILD=$(KERNEL_OUT) ARCH=arm CROSS_COMPILE="arm-eabi-"
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/compat/compat.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/mac80211/mac80211.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx.ko $(KERNEL_MODULES_OUT)
+	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx_sdio.ko $(KERNEL_MODULES_OUT)
+	arm-linux-androideabi-strip --strip-unneeded $(KERNEL_MODULES_OUT)/*
+
+TARGET_KERNEL_MODULES += WLAN_MODULES
 
 TARGET_OTA_ASSERT_DEVICE := galaxysl,GT-I9003,GT-I9003L

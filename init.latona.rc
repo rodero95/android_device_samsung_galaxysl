@@ -127,9 +127,15 @@ on post-fs-data
     chmod 0777 /sys/devices/platform/omapdss/overlay2/enabled
 
 # wi-fi
+	mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 system wifi
     mkdir /data/misc/softap 0770 system wifi
     mkdir /data/misc/dhcp 0770 dhcp dhcp
+	chown dhcp dhcp /data/misc/dhcp
+    insmod /system/lib/modules/compat.ko
+    insmod /system/lib/modules/cfg80211.ko
+    insmod /system/lib/modules/mac80211.ko
+    insmod /system/lib/modules/wl12xx.ko
 
 # ril-logging
     mkdir /data/log 0775 root root
@@ -271,9 +277,6 @@ on post-fs-data
     chown system system /sys/touchscreen/driver_filter
 
 on boot
-    # to enable wifi - for TIWLAN
-    setprop wifi.interface "tiwlan0"
-
     # Enabling sleep in idle path
     write /debug/pm_debug/sleep_while_idle 1
 
@@ -299,12 +302,6 @@ on boot
 
 # Touchscreen: bootcomplete
     write /sys/touchscreen/bootcomplete 1
-
-# Fix wifi MAC address
-service fix_mac /system/bin/sh /system/bin/fix_mac.sh
-    class main
-    user root
-    oneshot
 
 # 3D init
 service pvrsrvinit /system/bin/pvrsrvinit
@@ -335,62 +332,45 @@ service hciattach /system/bin/logwrapper /system/bin/hciattach -n /dev/ttyS1 tex
     disabled
     oneshot
 
-service wpa_supplicant /system/bin/wpa_supplicant -Dtiwlan0 -itiwlan0 -c/data/misc/wifi/wpa_supplicant.conf
-    class main
-    socket wpa_tiwlan0 dgram 0660 wifi wifi
-    disabled
-    oneshot
+service wpa_supplicant /system/bin/wpa_supplicant \
+       -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+       -e/data/misc/wifi/entropy.bin
+       class main
+       socket wpa_wlan0 dgram 660 wifi wifi
+       disabled
+       oneshot
 
-service wlan_loader /system/bin/tiwlan_loader -i /system/etc/wifi/tiwlan.ini -f /system/etc/wifi/firmware.bin -e /data/misc/wifi/nvs_map.bin
-    class main
-    disabled
-    oneshot
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+       class main
+       disabled
+       oneshot
 
-service wlan_plt_loader /system/bin/tiwlan_loader -i /system/etc/wifi/tiwlan_plt.ini -f /system/etc/wifi/firmware.bin -e /data/misc/wifi/nvs_map.bin
-    class main
-    disabled
-    oneshot
+service iprenew_wlan0 /system/bin/dhcpcd -n
+       class main
+       disabled
+       oneshot
 
-service ifcfg_tiwlan_up /system/bin/ifconfig tiwlan0 up
-    class main
-    disabled
-    oneshot
+service hostapd_bin /system/bin/hostapd -d /data/misc/wifi/hostapd.conf
+       socket wpa_wlan0 dgram 660 wifi wifi
+       disabled
+       oneshot
+   
+service p2p_supplicant /system/bin/wpa_supplicant \
+       -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf -N \
+       -ip2p0 -Dnl80211 -c/data/misc/wifi/p2p_supplicant.conf \
+       -puse_p2p_group_interface=1
+       class main
+       socket wpa_wlan0 dgram 660 wifi wifi
+       disabled
+       oneshot
 
-service tiwlan_plts /system/bin/tiwlan_plts
-    class main
-    disabled
-    oneshot
-
-service tiwlan_nvs /system/bin/tiwlan_plts -n
-    class main
-    disabled
-    oneshot
-
-service wlan_ap_loader /system/bin/tiap_loader -i /system/etc/wifi/softap/tiwlan_ap.ini -f /system/etc/wifi/softap/ap_firmware.bin -e /data/misc/wifi/nvs_map.bin
-    class main
-    disabled
-    oneshot
-
-service hostap_wrapper /system/bin/hostap_wrapper.sh
-    class main
-    group wifi system inet net_admin
-    socket tiap0 dgram 660 wifi wifi
-    disabled
-    oneshot
-
-# DHCPCD
-# wi-fi
-service dhcpcd_tiwlan0 /system/bin/dhcpcd -ABKL tiwlan0
-    class main
-    disabled
-    oneshot
-
-# IP Renew
-# wi-fi
-service iprenew_tiwlan0 /system/bin/dhcpcd -n
-    class main
-    disabled
-    oneshot
+service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+       disabled
+       oneshot
+   
+service iprenew_p2p /system/bin/dhcpcd -n
+       disabled
+       oneshot
 
 # bugreport is triggered by holding down volume down, volume up and power
 #service bugreport /system/bin/dumpstate -d -v -o /sdcard/bugreports/bugreport
