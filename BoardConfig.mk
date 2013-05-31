@@ -133,7 +133,6 @@ WLAN_MODULES:
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx.ko $(KERNEL_MODULES_OUT)
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx_sdio.ko $(KERNEL_MODULES_OUT)
-	arm-linux-androideabi-strip --strip-unneeded $(KERNEL_MODULES_OUT)/*
 
 TARGET_KERNEL_MODULES += WLAN_MODULES
 
