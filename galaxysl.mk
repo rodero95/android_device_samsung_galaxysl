@@ -17,8 +17,7 @@ PRODUCT_COPY_FILES := \
 	device/samsung/galaxysl/etc/asound.conf:system/etc/asound.conf \
 	device/samsung/galaxysl/etc/gps.conf:system/etc/gps.conf \
 	device/samsung/galaxysl/etc/gps.xml:system/vendor/etc/gps.xml \
-	device/samsung/galaxysl/etc/vold.fstab:system/etc/vold.fstab \
-	device/samsung/galaxysl/egl.cfg:system/lib/egl/egl.cfg
+	device/samsung/galaxysl/etc/vold.fstab:system/etc/vold.fstab
 
 # Init files
 PRODUCT_COPY_FILES += \
@@ -109,11 +108,8 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
 	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
 	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-	frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.distinct.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.distinct.xml \
 	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.xml \
 	frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
 
 # Packages
@@ -159,6 +155,10 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/libaudio/audio_policy.conf:system/etc/audio_policy.conf
+
+# SGX config file
+PRODUCT_COPY_FILES += \
+	device/samsung/galaxysl/etc/powervr.ini:system/etc/powervr.ini
 
 #Camera
 PRODUCT_PACKAGES += camera.latona
@@ -206,8 +206,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
        wifi.supplicant_scan_interval=180 \
        ro.telephony.ril_class=SamsungExynos3RIL \
        ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
-       mobiledata.interfaces=pdp0,eth0,gprs,ppp0 \
-       dev.sfbootcomplete=0
+       ro.telephony.call_ring.multiple=false \
+       ro.telephony.call_ring.delay=2000 \
+       mobiledata.interfaces=pdp0,eth0,gprs,ppp0
 
 
 # Set default USB interface
