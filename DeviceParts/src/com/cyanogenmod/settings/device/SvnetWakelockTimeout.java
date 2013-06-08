@@ -12,17 +12,21 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class TouchscreenSensitivity extends DialogPreference implements OnClickListener {
+/**
+ * Special preference type that allows configuration of both the ring volume and
+ * notification volume.
+ */
+public class SvnetWakelockTimeout extends DialogPreference implements OnClickListener {
 
-    private static final String FILE_APPLY = "/sys/touchscreen/set_write";
+    private static final String FILE = "/sys/devices/virtual/net/svnet0/waketime";
 
-    private static final String FILE_PATH = "/sys/touchscreen/set_touchscreen";
-    private static final String KEY_VALUE = "7";
-    private static final int DEFAULT_VALUE = 32;
-    private static final int MAX_VALUE = 70;
-    private static final int MIN_VALUE = 10;
-    private static final String SETTING_KEY = DeviceSettings.KEY_TOUCHSCREEN_SENSITIVITY;
-    private static final int TITLE = R.string.touchscreen_sensitivity_seekbar_title;
+    private static final int DEFAULT_VALUE = 6000;
+    private static final int MAX_VALUE = 10000;
+    private static final int MIN_VALUE = 1000;
+    private static final int TEXT_OFFSET = MIN_VALUE;
+    private static final int STEP_SIZE = 100;
+    private static final String SETTING_KEY = DeviceSettings.KEY_SVNET_WAKELOCK_TIMEOUT;
+    private static final int TITLE = R.string.svnet_wakelock_seekbar_title;
 
     private ScreenSeekBar mSeekBar;
 
@@ -30,7 +34,7 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
     // (when the orientation changes, a new dialog is created before the old one is destroyed)
     private static int sInstances = 0;
 
-    public TouchscreenSensitivity(Context context, AttributeSet attrs) {
+    public SvnetWakelockTimeout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setDialogLayoutResource(R.layout.preference_dialog_seekbar);
     }
@@ -47,6 +51,10 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         TextView title = (TextView) view.findViewById(R.id.seekbar_title);
         title.setText(TITLE);
         SetupButtonClickListeners(view);
+
+        TextView mAdditionalInfo = (TextView)view.findViewById(R.id.seekbar_additional_information);
+        mAdditionalInfo.setText(R.string.seekbar_additional_information_svnet);
+        mAdditionalInfo.setVisibility(View.VISIBLE);
     }
 
     private void SetupButtonClickListeners(View view) {
@@ -56,10 +64,6 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         mMinusButton.setOnClickListener(this);
         TextView mPlusButton = (TextView)view.findViewById(R.id.seekbar_btn_minus);
         mPlusButton.setOnClickListener(this);
-
-        TextView mAdditionalInfo = (TextView)view.findViewById(R.id.seekbar_additional_information);
-        mAdditionalInfo.setText(R.string.seekbar_additional_information);
-        mAdditionalInfo.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -80,26 +84,15 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         }
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String value = String.format("%03d", sharedPrefs.getInt(SETTING_KEY, DEFAULT_VALUE));
-        Utils.writeValue(FILE_PATH, KEY_VALUE + value);
-        applyChanges();
 
-        if(sharedPrefs.getBoolean(DeviceSettings.KEY_TOUCHSCREEN_DISABLE_CALIBRATION, false))
-            Utils.writeValue("/sys/touchscreen/disable_calibration", "1");
-        else
-            Utils.writeValue("/sys/touchscreen/disable_calibration", "0");
+        Utils.writeValue(FILE, Integer.toString(sharedPrefs.getInt(SETTING_KEY, DEFAULT_VALUE)));
     }
 
     public static boolean isSupported() {
-        if (Utils.fileExists(FILE_PATH)) {
+        if (Utils.fileExists(FILE)) {
             return true;
         }
-
         return false;
-    }
-
-    protected static void applyChanges() {
-        Utils.readOneLine(FILE_APPLY);
     }
 
     class ScreenSeekBar implements SeekBar.OnSeekBarChangeListener {
@@ -114,9 +107,11 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
             // Get value from the settings
             SharedPreferences sharedPreferences = getSharedPreferences();
             mOriginal = sharedPreferences.getInt(SETTING_KEY, DEFAULT_VALUE);
+            if(mOriginal == -1)
+                mOriginal = MAX_VALUE + STEP_SIZE;
 
             // Set seekbar range
-            mSeekBar.setMax(MAX_VALUE - MIN_VALUE);
+            mSeekBar.setMax(((MAX_VALUE - MIN_VALUE)/STEP_SIZE));
             reset();
             mSeekBar.setOnSeekBarChangeListener(this);
         }
@@ -126,17 +121,19 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         }
 
         public void reset() {
-            mSeekBar.setProgress(mOriginal - MIN_VALUE); // The saved value is the real value
-            updateValue(mOriginal - MIN_VALUE);
+            mSeekBar.setProgress((mOriginal - MIN_VALUE)/STEP_SIZE); // The saved value is the real value
+            updateValue((mOriginal - MIN_VALUE)/STEP_SIZE);
         }
 
         public void save() {
             Editor editor = getEditor();
-            int value = mSeekBar.getProgress() + MIN_VALUE; // Progress starts from 0, add MIN_VALUE to get the real value
+            int value;
+
+            value = (mSeekBar.getProgress() * STEP_SIZE + MIN_VALUE); // Progress starts from 0, add MIN_VALUE to get the real value
+
             editor.putInt(SETTING_KEY, value);
             editor.commit();
             writeConfig(value);
-            applyChanges();
         }
 
         @Override
@@ -155,7 +152,7 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         }
 
         protected void updateValue(int progress) {
-            mValueDisplay.setText(String.format("%d", progress + MIN_VALUE));
+            mValueDisplay.setText(String.format("%d ms", (int) (progress * STEP_SIZE + TEXT_OFFSET)));
         }
 
         public void setValue(int value) {
@@ -164,7 +161,7 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         }
 
         public void moveSeekBar(int value) {
-            int progress = (mSeekBar.getProgress() + MIN_VALUE) + value;
+            int progress = (mSeekBar.getProgress()*STEP_SIZE + MIN_VALUE) + value*STEP_SIZE;
             if (progress >= MIN_VALUE && progress <= MAX_VALUE) {
                 mOriginal = progress;
             }
@@ -172,8 +169,7 @@ public class TouchscreenSensitivity extends DialogPreference implements OnClickL
         }
 
         private void writeConfig(int value) {
-            //Add MIN_VALUE, make it three digits long and append the key
-            Utils.writeValue(FILE_PATH, KEY_VALUE + String.format("%03d", value));
+            Utils.writeValue(FILE, Integer.toString(value));
         }
     }
 
