@@ -35,7 +35,6 @@ TARGET_PROVIDES_INIT_TARGET_RC := true
 BOARD_NAND_PAGE_SIZE := 4096
 BOARD_NAND_SPARE_SIZE := 128
 BOARD_KERNEL_PAGESIZE := 4096
-BOARD_KERNEL_CMDLINE := console=ttySAC2,115200 consoleblank=0
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 4096
 
@@ -79,12 +78,18 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/galaxysl/bluetooth
 BOARD_EGL_CFG := device/samsung/galaxysl/egl.cfg
 USE_OPENGL_RENDERER := true
 
-# OMX Stuff
+# OMX
 HARDWARE_OMX := true
-TARGET_USE_OMX_RECOVERY := false
-TARGET_USE_OMAP_COMPAT := true
-BUILD_WITH_TI_AUDIO := 1
-BUILD_PV_VIDEO_ENCODERS := 1
+ifdef HARDWARE_OMX
+OMX_JPEG := true
+OMX_VENDOR := ti
+OMX_VENDOR_INCLUDES := \
+   hardware/ti/omx/system/src/openmax_il/omx_core/inc \
+   hardware/ti/omx/image/src/openmax_il/jpeg_enc/inc
+OMX_VENDOR_WRAPPER := TI_OMX_Wrapper
+BOARD_OPENCORE_LIBRARIES := libOMX_Core
+BOARD_OPENCORE_FLAGS := -DHARDWARE_OMX=1
+endif
 
 # Touchscreen
 BOARD_USE_LEGACY_TOUCHSCREEN := true
@@ -97,9 +102,6 @@ BOARD_USES_AUDIO_LEGACY := false
 BOARD_HAVE_FM_RADIO := true
 BOARD_GLOBAL_CFLAGS += -DHAVE_FM_RADIO
 BOARD_FM_DEVICE := si4709
-
-# Camera
-BOARD_CAMERA_LIBRARIES := libcamera
 
 # Connectivity - Wi-Fi
 USES_TI_MAC80211 := true

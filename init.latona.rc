@@ -9,9 +9,8 @@ on early-init
     export DEFAULT_BASEIMAGE /system/lib/dsp/baseimage.dof
     export QOSDYN_FILE /system/lib/dsp/qosdyn_3430.dll64P
 
-    mkdir /storage 0050 system sdcard_r
-    mkdir /storage/sdcard0 0000 system system
-    mkdir /storage/sdcard1 0000 system system
+    mkdir /storage/sdcard0 0000 root root
+    mkdir /storage/sdcard1 0000 root root
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
     symlink /storage/sdcard1 /emmc
@@ -340,15 +339,11 @@ on post-fs-data
 
 # Permissions for bluetooth.
     chmod 0660 /dev/ttyS1
-    chown bluetooth bluetooth /dev/ttyS1
+    chown bluetooth net_bt_stack /dev/ttyS1
     chmod 0660 /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
-    write /sys/class/rfkill/rfkill0/state 0
-
-# enable touch boost
-    write /sys/touchscreen/touch_boost 1
-    
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+   
 # Touchscreen fix (waleedq)
     write /sys/touchscreen/settings/set_touchscreen 7032
     write /sys/touchscreen/settings/set_noise 4027
@@ -366,19 +361,6 @@ on post-fs-data
     chown system system /sys/touchscreen/set_total
     chown system system /sys/touchscreen/set_touchscreen
     chown system system /sys/touchscreen/set_write
-
-# permissions for MTP device node_temporary permission_will be changed 0660
-    chmod 0660 /dev/usb_mtp_gadget 
-    chown system system /dev/usb_mtp_gadget
-    
-# Permission for USB and UART path
-    chown system radio /sys/devices/platform/switch-sio/uart_sel
-    chown system radio /sys/devices/platform/switch-sio/usb_sel        
-    
-# USB Device permission
-    chown system system /sys/devices/platform/android_usb/UsbMenuSel
-    chown system system /sys/devices/platform/android_usb/tethering    
-    chown system system /sys/devices/platform/i2c_omap.1/i2c-1/1-0048/twl4030_usb/vbus
 
 # FSync
     chown system system /sys/module/sync/parameters/fsync_enabled
@@ -452,7 +434,7 @@ service bdaddr /system/bin/bdaddr_read
     disabled
     oneshot
 
-on property:init.svc.bootanim=running
+on property:ril.bt_macaddr=*
     start bdaddr
 
 service wpa_supplicant /system/bin/wpa_supplicant \
