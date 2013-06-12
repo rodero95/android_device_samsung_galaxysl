@@ -141,6 +141,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/libaudio/audio_policy.conf:system/etc/audio_policy.conf
 
+# HWComposer
+PRODUCT_PACKAGES += hwcomposer.latona
+
 #Camera
 PRODUCT_PACKAGES += camera.latona
 
@@ -238,11 +241,7 @@ PRODUCT_COPY_FILES += \
 
 # bml_over_mtd
 PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
-
-# wifi MAC script
-PRODUCT_COPY_FILES += \
-	device/samsung/galaxysl/wifimac/fix_mac.sh:system/bin/fix_mac.sh
+device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
 
 # See comment at the top of this file. This is where the other
 # half of the device-specific product definition file takes care
