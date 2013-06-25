@@ -104,6 +104,7 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.location.xml:system/etc/permissions/android.hardware.location.xml \
 	frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
 	frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
 	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
 	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
 	frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
@@ -126,6 +127,11 @@ PRODUCT_PACKAGES := \
     SamsungServiceMode \
     hostapd.conf \
     DeviceParts
+
+# Charger
+PRODUCT_PACKAGES += \
+    charger \
+    charger_res_images
 
 #Filesystem binaries
 PRODUCT_PACKAGES += \
@@ -204,8 +210,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
        wifi.supplicant_scan_interval=180 \
        ro.telephony.ril_class=SamsungExynos3RIL \
        ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
-       mobiledata.interfaces=pdp0,eth0,gprs,ppp0 \
-       dev.sfbootcomplete=0
+       ro.telephony.call_ring.multiple=false \
+       ro.telephony.call_ring.delay=2000 \
+       dev.sfbootcomplete=0 \
+       mobiledata.interfaces=pdp0,eth0,gprs,ppp0
 
 
 # enable Google-specific location features,
