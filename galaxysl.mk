@@ -154,6 +154,9 @@ PRODUCT_COPY_FILES += \
 #Camera
 PRODUCT_PACKAGES += camera.latona
 
+#Power
+PRODUCT_PACKAGES += power.latona
+
 # OMX stuff
 PRODUCT_PACKAGES += \
     libstagefrighthw \
