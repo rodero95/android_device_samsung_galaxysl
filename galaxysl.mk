@@ -148,8 +148,7 @@ PRODUCT_COPY_FILES += \
 	device/samsung/galaxysl/libaudio/audio_policy.conf:system/etc/audio_policy.conf
 
 # HWComposer
-# Disabled the build of Hardware Composer as it breaks SurfaceFlinger on Android 4.2
-#PRODUCT_PACKAGES += hwcomposer.latona
+PRODUCT_PACKAGES += hwcomposer.latona
 
 #Camera
 PRODUCT_PACKAGES += camera.latona
