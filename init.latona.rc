@@ -54,6 +54,7 @@ on post-fs
 
 on post-fs-data
     chown system system /sys/class/backlight/omap_bl/brightness
+	chmod 0666 /sys/class/backlight/omap_bl/brightness
 
 # Vibrator
     chmod 0660 /dev/tspdrv
