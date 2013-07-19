@@ -17,8 +17,7 @@ PRODUCT_COPY_FILES := \
 	device/samsung/galaxysl/etc/gps.conf:system/etc/gps.conf \
 	device/samsung/galaxysl/etc/gps.xml:system/vendor/etc/gps.xml \
 	device/samsung/galaxysl/etc/vold.fstab:system/etc/vold.fstab \
-	device/samsung/galaxysl/etc/ubuntu-session.d/galaxysl.conf:system/etc/ubuntu-session.d/galaxysl.conf \
-	device/samsung/galaxysl/egl.cfg:system/lib/egl/egl.cfg
+	device/samsung/galaxysl/etc/ubuntu-session.d/galaxysl.conf:system/etc/ubuntu-session.d/galaxysl.conf
 
 # Init files
 PRODUCT_COPY_FILES += \
