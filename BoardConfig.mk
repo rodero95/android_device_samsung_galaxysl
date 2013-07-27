@@ -66,6 +66,9 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/class/android_usb/android0/f_mass_storage/lun%d/file"
 
+# Allow device to sleep during charging
+BOARD_CHARGER_ENABLE_SUSPEND := true
+
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/galaxysl
 
