@@ -77,6 +77,22 @@ BOARD_HARDWARE_CLASS := device/samsung/galaxysl/cmhw
 # Allow device to sleep during charging
 BOARD_CHARGER_ENABLE_SUSPEND := true
 
+# SELinux
+BOARD_SEPOLICY_DIRS += \
+    device/samsung/galaxysl/sepolicy
+	
+BOARD_SEPOLICY_UNION += \
+    bdaddr_read.te \
+    device.te \
+	domain.te \
+    file_contexts \
+    geomagneticd.te \
+    mediaserver.te \
+    orientationd.te \
+    property_contexts \
+    pvrsrvinit.te \
+    rild.te
+
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/galaxysl
 

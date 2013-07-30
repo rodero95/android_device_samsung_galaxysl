@@ -42,15 +42,22 @@ on fs
 
     # set permissions for files in /efs
     chown radio radio /efs
-    chmod 775 /efs
-    chmod 770 /efs/bluetooth
+    chmod 770 /efs
     chmod 770 /efs/imei
+	exec /system/bin/restorecon -r /efs
 
     chown radio radio /radio/modem.bin
+	exec /system/bin/restorecon -r /radio
     chmod 0664 /radio/modem.bin
 
     export TMPDIR /data/local/tmp
     symlink /data/local/tmp /tmp
+	
+# permission for tuning knobs
+    chown system system /sys/class/misc/notification/bl_timeout
+    chmod 660 /sys/class/misc/notification/bl_timeout
+    restorecon /sys/class/misc/notification/bl_timeout
+
 
 on post-fs
     # symlink for SamsungRIL
@@ -342,6 +349,9 @@ on post-fs-data
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
     write /sys/class/rfkill/rfkill0/state 0
+	restorecon /sys/class/rfkill/rfkill0/state
+    restorecon /sys/class/rfkill/rfkill0/type
+   
 # FSync
     chown system system /sys/module/sync/parameters/fsync_enabled
 
@@ -403,6 +413,7 @@ service baseimage /system/bin/cexec.out /system/lib/dsp/baseimage.dof
 
 service bdaddr /system/bin/bdaddr_read
     user root
+	group system bluetooth
     disabled
     oneshot
 
