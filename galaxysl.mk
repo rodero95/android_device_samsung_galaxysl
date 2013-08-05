@@ -127,7 +127,8 @@ PRODUCT_PACKAGES := \
     bootmenu_busybox \
     SamsungServiceMode \
     hostapd.conf \
-    DeviceParts
+    DeviceParts \
+	Droidwall
 
 # Charger
 PRODUCT_PACKAGES += \
