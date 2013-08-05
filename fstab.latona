@@ -4,11 +4,11 @@
  # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
  # Init mount points
-/dev/block/mtdblock2	/system	      yaffs2	 ro,noatime																	   wait
+system					/system	      yaffs2	 ro,noatime																	   wait
 /dev/block/mmcblk0p2    /cache        ext4       noatime,nosuid,nodev,barrier=1,data=ordered,noauto_da_alloc,errors=panic      wait,check
 /dev/block/mmcblk0p3    /data         ext4       noatime,nosuid,nodev,barrier=1,data=ordered,noauto_da_alloc,errors=panic      wait,check
-/dev/block/mtdblock3	/radio		  yaffs2	 defaults																	   defaults
-/dev/block/mtdblock4	/efs		  yaffs2	 defaults																	   defaults
+radio					/radio		  yaffs2	 defaults																	   defaults
+efs						/efs		  yaffs2	 defaults																	   defaults
 
  # Vold managed mount points (internal and external sdcard)
 /devices/platform/omap/omap_hsmmc.0/mmc_host/mmc1	/storage/sdcard1		auto		defaults		voldmanaged=emmc:auto
