@@ -86,6 +86,7 @@ BOARD_SEPOLICY_UNION += \
     device.te \
 	domain.te \
     file_contexts \
+	file.te \
     geomagneticd.te \
     mediaserver.te \
     orientationd.te \
