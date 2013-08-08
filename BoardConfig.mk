@@ -48,7 +48,6 @@ TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 # recovery
 BOARD_HAS_NO_SELECT_BUTTON := true
-TARGET_RECOVERY_PRE_COMMAND := "echo 1 > /cache/.startrecovery; sync;"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/galaxysl/recovery/recovery_keys.c
 BOARD_USES_BML_OVER_MTD := true
 TARGET_RECOVERY_FSTAB := device/samsung/galaxysl/fstab.latona
@@ -76,11 +75,11 @@ BOARD_WPAN_DEVICE := true
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/galaxysl/bluetooth
 
 # Egl
-TARGET_DISABLE_TRIPLE_BUFFERING := true
 BOARD_EGL_CFG := device/samsung/galaxysl/egl.cfg
 USE_OPENGL_RENDERER := true
+TARGET_DISABLE_TRIPLE_BUFFERING := false
 BOARD_EGL_NEEDS_LEGACY_FB := true
-COMMON_GLOBAL_CFLAGS += -DHAS_CONTEXT_PRIORITY
+COMMON_GLOBAL_CFLAGS += -DHAS_CONTEXT_PRIORITY -DDONT_USE_FENCE_SYNC
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
@@ -100,7 +99,6 @@ endif
 
 # Audio
 BOARD_USES_GENERIC_AUDIO := false
-BOARD_USES_AUDIO_LEGACY := false
 
 # FM Radio
 BOARD_HAVE_FM_RADIO := true
@@ -132,6 +130,9 @@ WIFI_MODULES:
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/net/wireless/cfg80211.ko $(KERNEL_MODULES_OUT)
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx.ko $(KERNEL_MODULES_OUT)
 	mv hardware/ti/wlan/mac80211/compat_wl12xx/drivers/net/wireless/wl12xx/wl12xx_sdio.ko $(KERNEL_MODULES_OUT)
+	$(ARM_EABI_TOOLCHAIN)/arm-eabi-strip --strip-debug $(KERNEL_MODULES_OUT)/compat.ko \
+		$(KERNEL_MODULES_OUT)/mac80211.ko $(KERNEL_MODULES_OUT)/cfg80211.ko \
+		$(KERNEL_MODULES_OUT)/wl12xx.ko $(KERNEL_MODULES_OUT)/wl12xx_sdio.ko
 
 TARGET_KERNEL_MODULES := WIFI_MODULES
 

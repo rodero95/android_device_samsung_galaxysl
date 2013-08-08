@@ -240,7 +240,7 @@ on post-fs-data
 	chown radio system /sys/power/dvfslock_ctrl
     chmod 0660 /sys/power/dvfslock_ctrl
 
-# geomagnetic for rev 0.1 
+# proximity 
     chown system input /sys/class/input/input3/enable
     chown system input /sys/class/input/input3/poll_delay
     chown system input /sys/class/input/input3/filter_enable
@@ -250,17 +250,11 @@ on post-fs-data
     chown system input /sys/class/input/input3/wake
     chown system input /sys/class/input/input3/position
 
-# geomagnetic for rev 0.8
+# light sensor
     chown system input /sys/class/input/input4/enable
     chown system input /sys/class/input/input4/poll_delay
-    chown system input /sys/class/input/input4/filter_enable
-    chown system input /sys/class/input/input4/filter_len
-    chown system input /sys/class/input/input4/data
-    chown system input /sys/class/input/input4/status
-    chown system input /sys/class/input/input4/wake
-    chown system input /sys/class/input/input4/position
 
-# geomagnetic raw for rev 0.1
+# accelerometer
     chown system input /sys/class/input/input4/threshold
     chown system input /sys/class/input/input4/distortion
     chown system input /sys/class/input/input4/shape
@@ -270,11 +264,9 @@ on post-fs-data
 
 # geomagnetic raw for rev 0.8
     chown system input /sys/class/input/input5/threshold
-    chown system input /sys/class/input/input5/distortion
-    chown system input /sys/class/input/input5/shape
-    chown system input /sys/class/input/input5/offsets
-    write /sys/class/input/input5/threshold 1
-    write /sys/class/input/input5/distortion "20 20 15"
+    chown system input /sys/class/input/input5/wake
+    chown system input /sys/class/sensors/accelerometer_sensor/raw_data
+    chown system input /sys/class/sensors/accelerometer_sensor/calibration
     write /sys/class/input/input5/filter_enable 1
 
 # accelerometer for rev 0.1
@@ -289,10 +281,9 @@ on post-fs-data
 # accelerometer for rev 0.8
     chown system input /sys/class/input/input6/enable
     chown system input /sys/class/input/input6/poll_delay
-    chown system input /sys/class/input/input6/position
-    chown system input /sys/class/input/input6/threshold
     chown system input /sys/class/input/input6/wake
     chown system input /sys/class/input/input6/data
+    chown system input /sys/class/input/input6/status
     chown system input /sys/class/input/input6/calibration
 
 # orientation
@@ -305,7 +296,12 @@ on post-fs-data
 # proximity
     chown system input /sys/class/input/input7/enable
     chown system input /sys/class/input/input7/poll_delay
+    chown system input /sys/class/input/input7/filter_enable
+    chown system input /sys/class/input/input7/filter_len
+    chown system input /sys/class/input/input7/data
+    chown system input /sys/class/input/input7/status
     chown system input /sys/class/input/input7/wake
+    chown system input /sys/class/input/input7/position
     chown system input /sys/class/sensors/proximity_sensor/state
     chown system input /sys/class/sensors/proximity_sensor/adc
 
@@ -330,7 +326,7 @@ on post-fs-data
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
-   
+    write /sys/class/rfkill/rfkill0/state 0
 # FSync
     chown system system /sys/module/sync/parameters/fsync_enabled
 
