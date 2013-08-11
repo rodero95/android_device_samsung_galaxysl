@@ -92,7 +92,8 @@ BOARD_SEPOLICY_UNION += \
     orientationd.te \
     property_contexts \
     pvrsrvinit.te \
-    rild.te
+    rild.te \
+	wpa_supplicant.te
 
 # Releasetools
 TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/galaxysl
