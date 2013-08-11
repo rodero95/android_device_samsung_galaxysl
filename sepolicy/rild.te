@@ -21,5 +21,4 @@ allow rild radio_device:chr_file rw_file_perms;
 
 allow rild efs_block_device:blk_file rw_file_perms;
 
-allow rild radio_data_file:file { read open write setattr };
-allow rild efs_file:file { read open write getattr };
+allow rild efs_file:file { read open write setattr };

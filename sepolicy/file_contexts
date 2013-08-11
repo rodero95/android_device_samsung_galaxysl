@@ -6,14 +6,10 @@
 /dev/onedram                                        u:object_r:radio_device:s0
 /radio(/.*)?                                        u:object_r:rild_file:s0
 /dev/tyyS0                                          u:object_r:radio_device:s0
-/efs/bluetooth/(/.*)?                               u:object_r:bluetooth_efs_file:s0
-/efs/imei/mps_code.dat                              u:object_r:radio_data_file:s0
-/efs/nv_data.bin                                    u:object_r:radio_data_file:s0
-/efs/nv_data.bin.md5                                u:object_r:radio_data_file:s0
-/efs/upgaddr                                        u:object_r:efs_file:s0
 
 # Bluetooth
 /dev/ttyS1                                          u:object_r:hci_attach_dev:s0
+/efs/bluetooth/(/.*)?                               u:object_r:bluetooth_efs_file:s0
 
 # GFX
 /dev/dsscomp                                        u:object_r:video_device:s0
@@ -29,8 +25,9 @@
 # Bluetooth
 /system/bin/bdaddr_read                             u:object_r:bdaddr_read_exec:s0
 
-# for wpa_supp
+# WiFi
 /dev/rfkill                                         u:object_r:rfkill_device:s0
+/efs/wifi/.mac.info                                 u:object_r:wifi_data_file:s0
 
 # System binaries
 /system/vendor/bin/pvrsrvinit                       u:object_r:pvrsrvinit_exec:s0

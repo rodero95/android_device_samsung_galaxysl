@@ -26,8 +26,15 @@ on early-init
     write /proc/sys/kernel/sched_child_runs_first 0
 
 on fs
-    mkdir /radio 0775 radio radio
+    mount_all fstab.latona
+
+	mkdir /radio 0775 radio radio
     mkdir /efs 0775 radio radio
+	
+	chmod 0775 /radio
+	chown radio radio /radio
+	chmod 0775 /efs
+	chown radio radio /efs
 
     mount yaffs2 mtd@efs /efs
     mount yaffs2 mtd@radio /radio
@@ -37,6 +44,22 @@ on fs
 	
     mount_all fstab.latona
 
+# Restorecon
+    restorecon /efs/nv_data.bin
+    restorecon /efs/nv_data.bin.md5
+    restorecon /efs/.nv_core.bak
+    restorecon /efs/.nv_core.bak.md5
+    restorecon /efs/.nv_data.bak
+    restorecon /efs/.nv_data.bak.md5
+    restorecon /efs/.nv_state
+    restorecon /efs/bluetooth/bt_addr
+    restorecon /efs/FactoryApp/factorymode
+    restorecon /efs/FactoryApp/hw_ver
+    restorecon /efs/FactoryApp/keystr
+    restorecon /efs/FactoryApp/serial_no
+    restorecon /efs/imei/mps_code.dat
+	restorecon /efs/wifi/.mac.info
+	
     # download cache
     mkdir /data/download 0770 system cache
 
