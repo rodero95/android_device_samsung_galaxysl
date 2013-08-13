@@ -54,6 +54,10 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 TARGET_RECOVERY_PRE_COMMAND := "echo 1 > /cache/.startrecovery; sync;"
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/galaxysl/recovery/recovery_keys.c
 BOARD_USES_BML_OVER_MTD := true
+# TWRP support
+DEVICE_RESOLUTION := 480x800
+TW_INCLUDE_INJECTTWRP := true
+TW_NO_REBOOT_BOOTLOADER := true
 
 # fix this up by examining /proc/mtd on a running device
 BOARD_BOOTIMAGE_PARTITION_SIZE := 8388608
