@@ -65,7 +65,9 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 2013200384
 BOARD_FLASH_BLOCK_SIZE := 4096
 TARGET_USERIMAGES_USE_EXT4 := true
 
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/class/android_usb/android0/f_mass_storage/lun%d/file"
+# Vold
+BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun%d/file"
 
 # Hardware tunables
 BOARD_HARDWARE_CLASS := hardware/samsung/cmhw
@@ -90,6 +92,9 @@ COMMON_GLOBAL_CFLAGS += -DHAS_CONTEXT_PRIORITY -DDONT_USE_FENCE_SYNC
 
 # Enable WEBGL in WebKit
 ENABLE_WEBGL := true
+
+# Enable suspend in charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # OMX
 HARDWARE_OMX := true

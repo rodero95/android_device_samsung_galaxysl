@@ -203,7 +203,6 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
     }
 
     switch (hint) {
-    case POWER_HINT_INTERACTION:
         if (boostpulse_open(latona) >= 0) {
 	    len = write(latona->boostpulse_fd, "1", 1);
 
@@ -214,6 +213,7 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
 	}
         break;
 
+    case POWER_HINT_INTERACTION:
     case POWER_HINT_VSYNC:
         break;
 
