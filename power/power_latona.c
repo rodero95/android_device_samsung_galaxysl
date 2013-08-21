@@ -121,6 +121,7 @@ static void latona_power_set_interactive(struct power_module *module, int on)
 {
     struct latona_power_module *latona = (struct latona_power_module *) module;
     int len;
+
     char buf[MAX_BUF_SZ];
 
     /*
@@ -155,6 +156,7 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
     int duration = 1;
 
     switch (hint) {
+    case POWER_HINT_CPU_BOOST:
     case POWER_HINT_CPU_BOOST:
         if (boostpulse_open(latona) >= 0) {
             if (data != NULL)
