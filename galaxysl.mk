@@ -128,6 +128,7 @@ PRODUCT_PACKAGES := \
     SamsungServiceMode \
     hostapd.conf \
     DeviceParts \
+    CMAccount \
     Droidwall
 
 # Charger
