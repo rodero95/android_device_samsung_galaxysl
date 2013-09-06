@@ -72,7 +72,7 @@ BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun%d/file"
 
 # Hardware tunables
-BOARD_HARDWARE_CLASS := hardware/samsung/cmhw
+BOARD_HARDWARE_CLASS := device/samsung/galaxysl/cmhw
 
 # Allow device to sleep during charging
 BOARD_CHARGER_ENABLE_SUSPEND := true
