@@ -16,5 +16,9 @@ PRODUCT_NAME := cm_galaxysl
 PRODUCT_BRAND := Samsung
 PRODUCT_MODEL := GT-I9003
 
+## Set selinux builds as experimental
+CM_EXPERIMENTAL := true
+CM_EXTRAVERSION := "selinux"
+
 #Set build fingerprint / ID / Prduct Name ect.
 PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=GT-I9003 BUILD_ID=JSS15Q BUILD_DISPLAY_ID=JSS15Q BUILD_FINGERPRINT="samsung/GT-I9003/GT-I9003:4.3/JSS15Q/779366:user/release-keys" PRIVATE_BUILD_DESC="GT-I9003 4.3 JSS15Q 779366 release-keys"
