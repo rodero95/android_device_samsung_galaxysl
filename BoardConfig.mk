@@ -44,7 +44,7 @@ TARGET_SPECIFIC_HEADER_PATH := device/samsung/galaxysl/include
 BOARD_CUSTOM_BOOTIMG_MK := device/samsung/galaxysl/shbootimg.mk
 
 # Inline kernel building config
-TARGET_KERNEL_CONFIG := latona_selinux_defconfig
+TARGET_KERNEL_CONFIG := latona_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/latona
 TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
