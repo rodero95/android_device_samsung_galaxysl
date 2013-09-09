@@ -4,20 +4,12 @@
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
 # Recovery mount points
-boot                    /boot         mtd        defaults                                               recoveryonly
 recovery                /recovery     mtd        defaults                                               recoveryonly
+boot                    /boot         mtd        defaults                                               recoveryonly
 radio                   /radio        mtd        defaults                                               recoveryonly
-system                  /system       yaffs2     defaults                                               recoveryonly
-/dev/block/mmcblk0p2    /cache        ext4       defaults                                               recoveryonly
 /dev/block/mmcblk0p3    /data         ext4       defaults                                               recoveryonly
-/dev/block/mmcblk0p1    /sdcard       vfat       defaults                                               recoveryonly,lun=/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun0/file
-/dev/block/mmcblk1p1    /external_sd  vfat       defaults                                               recoveryonly,lun=/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun1/file
-
-# Init mount points
-radio                   /radio        yaffs2     defaults                                               defaults
-efs                     /efs          yaffs2     defaults                                               defaults
-/dev/block/mmcblk0p2    /cache        ext4       noatime,nosuid,nodev,nomblk_io_submit,errors=panic     wait
-/dev/block/mmcblk0p3    /data         ext4       noatime,nosuid,nodev,nomblk_io_submit,errors=panic     wait
+/dev/block/mmcblk0p2    /cache        ext4       defaults                                               recoveryonly
+system                  /system       yaffs2     defaults                                               recoveryonly
 
 # Vold managed mount points (internal and external sdcard)
 /devices/platform/omap/omap_hsmmc.1/mmc_host/mmc0    /storage/sdcard0    auto    defaults    voldmanaged=sdcard0:1,nonremovable
