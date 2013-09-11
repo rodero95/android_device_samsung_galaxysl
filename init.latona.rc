@@ -342,9 +342,11 @@ on post-fs-data
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
     chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
-    write /sys/class/rfkill/rfkill0/state 0
 # FSync
     chown system system /sys/module/sync/parameters/fsync_enabled
+
+# touchkeys backlight timeout
+    chown root system /sys/class/leds/button-backlight/bl_timeout
 
 on boot
 
@@ -475,6 +477,7 @@ service orientationd /system/bin/orientationd
     class main
     user compass
     group input
+    disabled
 
 service geomagneticd /system/bin/geomagneticd
     class main

@@ -143,7 +143,6 @@ PRODUCT_PACKAGES += \
 
 # Audio
 PRODUCT_PACKAGES += \
-    hcitool hciattach hcidump \
 	libaudioutils audio.a2dp.default \
 	audio.primary.omap3 audio.usb.default
 
@@ -264,7 +263,7 @@ PRODUCT_COPY_FILES += \
 
 # bml_over_mtd
 PRODUCT_COPY_FILES += \
-device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
+	device/samsung/galaxysl/bml_over_mtd.sh:bml_over_mtd.sh
 
 # See comment at the top of this file. This is where the other
 # half of the device-specific product definition file takes care
