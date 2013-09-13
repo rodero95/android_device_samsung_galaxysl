@@ -127,7 +127,6 @@ PRODUCT_PACKAGES := \
     bootmenu_busybox \
     SamsungServiceMode \
     hostapd.conf \
-    CMAccount \
     Droidwall
 
 # Charger
