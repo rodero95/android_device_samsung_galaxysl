@@ -107,11 +107,8 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
 	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
 	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-	frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.distinct.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.distinct.xml \
 	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.xml \
 	frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
 	frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml
 
@@ -139,6 +136,12 @@ PRODUCT_PACKAGES += \
     bml_over_mtd \
     utility_make_ext4fs \
     make_ext4fs
+
+# Support for Browser's saved page feature. This allows
+# for pages saved on previous versions of the OS to be
+# viewed on the current OS.
+PRODUCT_PACKAGES += \
+    libskia_legacy
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -206,6 +209,10 @@ DEVICE_PACKAGE_OVERLAYS += device/samsung/galaxysl/overlay
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.opengles.version=131072
 
+# PowerVR graphics driver configuration
+PRODUCT_COPY_FILES += \
+   $(LOCAL_PATH)/etc/powervr.ini:system/etc/powervr.ini
+
 # Support for Browser's saved page feature. This allows
 # for pages saved on previous versions of the OS to be
 # viewed on the current OS.
@@ -222,7 +229,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
        ro.telephony.ril.v3=icccardstatus,datacall,signalstrength,facilitylock \
        ro.telephony.call_ring.multiple=false \
        ro.telephony.call_ring.delay=2000 \
-       dev.sfbootcomplete=0 \
        mobiledata.interfaces=pdp0,eth0,gprs,ppp0
 
 # SGX530 is slower with the scissor optimization enabled

@@ -27,7 +27,6 @@
 #include <cutils/native_handle.h>
 #include <hal_public.h>
 #include <ui/GraphicBufferMapper.h>
-#include <gui/IGraphicBufferProducer.h>
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #define VIDEO_DEVICE_2      "/dev/video5"
@@ -828,6 +827,8 @@ status_t CameraHardware::startRecording()
 
     mCamera->setCamMode(MODE_CAMCORDER);
 
+    mCamera->setCamMode(MODE_CAMCORDER);
+
     buffersQueued = 0;
 
     mRecordingEnabled = true;
@@ -850,6 +851,9 @@ void CameraHardware::stopRecording()
     }
 
     mCamera->setCamMode(MODE_CAMERA);
+
+    // Release constraint to DSP OPP by setting lowest Hz
+    SetDSPKHz(DSP3630_KHZ_MIN);
 }
 
 bool CameraHardware::recordingEnabled()

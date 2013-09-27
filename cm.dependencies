@@ -2,7 +2,6 @@
     {
 		"repository": "android_kernel_samsung_latona",
         "target_path": "kernel/samsung/latona",
-        "branch": "cm-10.2"
     },
     {
         "repository": "android_packages_apps_SamsungServiceMode",
