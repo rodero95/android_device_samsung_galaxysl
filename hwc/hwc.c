@@ -1059,10 +1059,10 @@ static int omap3_hwc_prepare(struct hwc_composer_device_1 *dev, size_t numDispla
             if (hwc_dev->use_sgx)
                 layer->hints |= HWC_HINT_CLEAR_FB;
             /* see if any of the (non-backmost) overlays are doing blending */
-            else if (is_BLENDED(layer) && i > 0)
+            else if (is_BLENDED(layer->blending) && i > 0)
                 hwc_dev->ovls_blending = 1;
 
-            hwc_dev->buffers[dsscomp->num_ovls] = handle;
+            hwc_dev->buffers[dsscomp->num_ovls] = layer->handle;
 
             omap3_hwc_setup_layer(hwc_dev,
                                   &dsscomp->ovls[dsscomp->num_ovls],
@@ -1565,7 +1565,7 @@ static void *vsync_loop(void *param)
     omap3_hwc_device_t *hwc_dev = param;
 
     fb0_vsync_fd = open("/sys/devices/platform/omapfb/graphics/fb0/vsync_time", O_RDONLY);
-    if (!fb0_vsync_fd)
+    if (fb0_vsync_fd < 0)
         return NULL;
 
     setpriority(PRIO_PROCESS, 0, HAL_PRIORITY_URGENT_DISPLAY);
