@@ -257,6 +257,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.boot.selinux=disabled
 	
+# Enable libart
+PRODUCT_RUNTIMES += runtime_libdvm_default 
+PRODUCT_RUNTIMES += runtime_libart
+	
 include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 
 # Screen density is actually considered a locale (since it is taken into account
