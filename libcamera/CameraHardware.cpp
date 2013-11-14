@@ -861,7 +861,8 @@ void CameraHardware::stopRecording()
     mCamera->setCamMode(MODE_CAMERA);
 
     // Release constraint to DSP OPP by setting lowest Hz
-    SetDSPKHz(DSP3630_KHZ_MIN);
+	// As of Kitkat, manually set lowest Hz number
+    SetDSPKHz(260000);
 }
 
 bool CameraHardware::recordingEnabled()
