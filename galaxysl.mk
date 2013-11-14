@@ -253,6 +253,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.additionalmounts=/storage/sdcard1
 
+# Disable SELinux on boot
+PRODUCT_PROPERTY_OVERRIDES += \
+	ro.boot.selinux=disabled
+	
 include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 
 # Screen density is actually considered a locale (since it is taken into account
