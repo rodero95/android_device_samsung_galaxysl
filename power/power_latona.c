@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2012 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +19,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <time.h>
 
 #define LOG_TAG "Latona PowerHAL"
 #include <utils/Log.h>
@@ -28,21 +28,44 @@
 
 #define CPUFREQ_CPU0 "/sys/devices/system/cpu/cpu0/cpufreq/"
 #define CPUFREQ_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/"
-#define BOOSTPULSE_ONDEMAND (CPUFREQ_ONDEMAND "boostpulse")
-
-#define MAX_BUF_SZ  10
-
-/* initialize to something safe */
-static char screen_off_max_freq[MAX_BUF_SZ] = "600000";
-static char scaling_max_freq[MAX_BUF_SZ] = "1000000";
+#define CPUFREQ_INTERACTIVE "/sys/devices/system/cpu/cpufreq/interactive/"
 
 struct latona_power_module {
     struct power_module base;
     pthread_mutex_t lock;
     int boostpulse_fd;
     int boostpulse_warned;
-    int64_t last_maxfreq_change;
 };
+
+static char governor[20];
+
+static int sysfs_read(char *path, char *s, int num_bytes)
+{
+    char buf[80];
+    int count;
+    int ret = 0;
+    int fd = open(path, O_RDONLY);
+
+    if (fd < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGE("Error opening %s: %s\n", path, buf);
+
+        return -1;
+    }
+
+    if ((count = read(fd, s, num_bytes - 1)) < 0) {
+        strerror_r(errno, buf, sizeof(buf));
+        ALOGE("Error writing to %s: %s\n", path, buf);
+
+        ret = -1;
+    } else {
+        s[count] = '\0';
+    }
+
+    close(fd);
+
+    return ret;
+}
 
 static void sysfs_write(char *path, char *s)
 {
@@ -65,36 +88,44 @@ static void sysfs_write(char *path, char *s)
     close(fd);
 }
 
-
-int sysfs_read(const char *path, char *buf, size_t size)
-{
-    int fd, len;
-
-    fd = open(path, O_RDONLY);
-    if (fd < 0)
+static int get_scaling_governor() {
+    if (sysfs_read(CPUFREQ_CPU0 "scaling_governor", governor,
+                sizeof(governor)) == -1) {
+        // Can't obtain the scaling governor. Return.
         return -1;
+    } else {
+        // Strip newline at the end.
+        int len = strlen(governor);
 
-    do {
-        len = read(fd, buf, size);
-    } while (len < 0 && errno == EINTR);
+        len--;
 
-    close(fd);
+        while (len >= 0 && (governor[len] == '\n' || governor[len] == '\r'))
+            governor[len--] = '\0';
+    }
 
-    return len;
+    return 0;
 }
 
-static int64_t systemTime()
+static void latona_power_set_interactive(struct power_module *module, int on)
 {
-    struct timespec t;
-    t.tv_sec = t.tv_nsec = 0;
-    clock_gettime(CLOCK_MONOTONIC, &t);
-    return t.tv_sec*1000000000LL + t.tv_nsec;
+    get_scaling_governor();
+    if (strncmp(governor, "interactive", 11) == 0)
+        sysfs_write(CPUFREQ_INTERACTIVE "timer_rate", on ? "30000" : "150000");
+    if (strncmp(governor, "ondemand", 11) == 0)
+        sysfs_write(CPUFREQ_ONDEMAND "sampling_rate", on ? "60000" : "150000");
 }
 
-static void latona_power_init(struct power_module *module)
+static void configure_governor()
 {
-    sysfs_write(CPUFREQ_ONDEMAND "boostfreq", "600000");
-    sysfs_write(CPUFREQ_ONDEMAND "sampling_rate", "90000");
+    latona_power_set_interactive(NULL, 1);
+    if (strncmp(governor, "interactive", 11) == 0) {
+        sysfs_write(CPUFREQ_INTERACTIVE "min_sample_time", "90000");
+        sysfs_write(CPUFREQ_INTERACTIVE "above_hispeed_delay", "30000");
+        sysfs_write(CPUFREQ_INTERACTIVE "hispeed_freq", "600000");
+    } else if (strncmp(governor, "ondemand", 8) == 0) {
+        sysfs_write(CPUFREQ_ONDEMAND "io_is_busy", "1");
+        sysfs_write(CPUFREQ_ONDEMAND "boostfreq", "600000");
+    }
 }
 
 static int boostpulse_open(struct latona_power_module *latona)
@@ -104,47 +135,28 @@ static int boostpulse_open(struct latona_power_module *latona)
     pthread_mutex_lock(&latona->lock);
 
     if (latona->boostpulse_fd < 0) {
-        latona->boostpulse_fd = open(BOOSTPULSE_ONDEMAND, O_WRONLY);
-
-        if (latona->boostpulse_fd < 0 && !latona->boostpulse_warned) {
-            strerror_r(errno, buf, sizeof(buf));
-            ALOGE("Error opening boostpulse: %s\n", buf);
+        if (get_scaling_governor() < 0) {
+            ALOGE("Can't read scaling governor.");
             latona->boostpulse_warned = 1;
-        } else if (latona->boostpulse_fd > 0)
-            ALOGD("Opened boostpulse interface\n");
+        } else {
+            if (strncmp(governor, "ondemand", 8) == 0)
+                latona->boostpulse_fd = open(CPUFREQ_ONDEMAND "boostpulse", O_WRONLY);
+            else if (strncmp(governor, "interactive", 11) == 0)
+                latona->boostpulse_fd = open(CPUFREQ_INTERACTIVE "boostpulse", O_WRONLY);
+
+            if (latona->boostpulse_fd < 0 && !latona->boostpulse_warned) {
+                strerror_r(errno, buf, sizeof(buf));
+                ALOGE("Error opening %s boostpulse interface: %s\n", governor, buf);
+                latona->boostpulse_warned = 1;
+            } else if (latona->boostpulse_fd > 0) {
+                configure_governor();
+                ALOGD("Opened %s boostpulse interface", governor);
+            }
+        }
     }
 
     pthread_mutex_unlock(&latona->lock);
     return latona->boostpulse_fd;
-}
-
-static void latona_power_set_interactive(struct power_module *module, int on)
-{
-    struct latona_power_module *latona = (struct latona_power_module *) module;
-    int len;
-    char buf[MAX_BUF_SZ];
-
-    /*
-     * Lower maximum frequency when screen is off.  
-     */
-    if (!on) {
-        /* read the current scaling max freq and save it before updating, but
-         * only if the at least 500ms have passed since the last change.
-         * This should prevent unwanted changes in case the "on" call is skipped
-         * (can happen if you press the power button repeatedly)
-         */
-        if ((systemTime() - latona->last_maxfreq_change) > 500000000) {
-            len = sysfs_read(CPUFREQ_CPU0 "scaling_max_freq", buf, sizeof(buf));
-            if (len != -1)
-                memcpy(scaling_max_freq, buf, sizeof(buf));
-        } else
-            ALOGI("Don't save current max frequency");
-
-        sysfs_write(CPUFREQ_CPU0 "scaling_max_freq", screen_off_max_freq);
-    } else
-        sysfs_write(CPUFREQ_CPU0 "scaling_max_freq", scaling_max_freq);
-
-    latona->last_maxfreq_change = systemTime();
 }
 
 static void latona_power_hint(struct power_module *module, power_hint_t hint,
@@ -156,6 +168,7 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
     int duration = 1;
 
     switch (hint) {
+    case POWER_HINT_INTERACTION:
     case POWER_HINT_CPU_BOOST:
         if (boostpulse_open(latona) >= 0) {
             if (data != NULL)
@@ -167,6 +180,7 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
             if (len < 0) {
                 strerror_r(errno, buf, sizeof(buf));
                 ALOGE("Error writing to boostpulse: %s\n", buf);
+
                 pthread_mutex_lock(&latona->lock);
                 close(latona->boostpulse_fd);
                 latona->boostpulse_fd = -1;
@@ -176,13 +190,19 @@ static void latona_power_hint(struct power_module *module, power_hint_t hint,
         }
         break;
 
-    case POWER_HINT_INTERACTION:
     case POWER_HINT_VSYNC:
         break;
 
     default:
         break;
     }
+}
+
+static void latona_power_init(struct power_module *module)
+{
+    get_scaling_governor();
+    configure_governor();
+    sysfs_write(CPUFREQ_CPU0 "screen_off_max_freq", "800000");
 }
 
 static struct hw_module_methods_t power_module_methods = {
@@ -197,10 +217,9 @@ struct latona_power_module HAL_MODULE_INFO_SYM = {
             hal_api_version: HARDWARE_HAL_API_VERSION,
             id: POWER_HARDWARE_MODULE_ID,
             name: "Latona Power HAL",
-            author: "The Android Open Source Project",
+            author: "The CyanogenMod Project",
             methods: &power_module_methods,
         },
-
        init: latona_power_init,
        setInteractive: latona_power_set_interactive,
        powerHint: latona_power_hint,
@@ -209,5 +228,4 @@ struct latona_power_module HAL_MODULE_INFO_SYM = {
     lock: PTHREAD_MUTEX_INITIALIZER,
     boostpulse_fd: -1,
     boostpulse_warned: 0,
-    last_maxfreq_change: 0,
 };
