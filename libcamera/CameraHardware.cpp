@@ -528,6 +528,14 @@ bool CameraHardware::validateSize(size_t width, size_t height, const supported_r
     return ret;
 }
 
+void CameraHardware::SetDSPKHz(unsigned int KHz)
+{
+    char command[100];
+    sprintf(command, "echo %u > /sys/power/dsp_freq", KHz);
+    system(command);
+    // ALOGD("command: %s", command);
+}
+
 // ---------------------------------------------------------------------------
 static void showFPS(const char *tag)
 {
