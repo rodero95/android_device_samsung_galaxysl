@@ -256,6 +256,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.boot.selinux=disabled
 	
+# Set custom bootanimation
+PRODUCT_BOOTANIMATION := device/samsung/galaxysl/etc/bootanimation.zip
+
 # Enable libart
 PRODUCT_RUNTIMES += runtime_libdvm_default 
 PRODUCT_RUNTIMES += runtime_libart
