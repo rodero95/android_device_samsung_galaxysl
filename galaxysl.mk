@@ -252,6 +252,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.additionalmounts=/storage/sdcard1
 
+# Set custom bootanimation
+PRODUCT_BOOTANIMATION := device/samsung/galaxysl/etc/bootanimation.zip
+	
 include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
 
 # Screen density is actually considered a locale (since it is taken into account
