@@ -4,8 +4,4 @@
         "target_path": "external/bluetooth/bluedroid",
         "branch": "cm-10.1"
     },
-	{
-		"repository": "android_packages_apps_droidwall",
-		"target_path": "packages/apps/droidwall"
-	}
 ]

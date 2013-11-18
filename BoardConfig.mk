@@ -6,11 +6,11 @@ TARGET_BOARD_PLATFORM := omap3
 TARGET_BOOTLOADER_BOARD_NAME := latona
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-TARGET_CPU_VARIANT := cortex-a8
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_ARCH_VARIANT_CPU := cortex-a8
 TARGET_ARCH_VARIANT_FPU := neon
-TARGET_ARCH_LOWMEM := true
+ARCH_ARM_HAVE_TLS_REGISTER := true
 
 TARGET_GLOBAL_CFLAGS += -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
 TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
@@ -34,7 +34,6 @@ TARGET_PROVIDES_INIT_TARGET_RC := true
 
 BOARD_NAND_PAGE_SIZE := 4096
 BOARD_NAND_SPARE_SIZE := 128
-BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_PAGE_SIZE := 4096
@@ -46,14 +45,11 @@ BOARD_CUSTOM_BOOTIMG_MK := device/samsung/galaxysl/shbootimg.mk
 # Inline kernel building config
 TARGET_KERNEL_CONFIG := latona_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/latona
-TARGET_KERNEL_CUSTOM_TOOLCHAIN := arm-eabi-4.4.3
 
 # recovery
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/galaxysl/recovery/recovery_keys.c
 BOARD_USES_BML_OVER_MTD := true
-TARGET_RECOVERY_FSTAB := device/samsung/galaxysl/fstab.latona
-RECOVERY_FSTAB_VERSION := 2
 # TWRP support
 DEVICE_RESOLUTION := 480x800
 TW_INCLUDE_INJECTTWRP := true
@@ -70,9 +66,6 @@ TARGET_USERIMAGES_USE_EXT4 := true
 # Vold
 BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/devices/platform/omap/musb-omap2430/musb-hdrc/gadget/lun%d/file"
-
-# Hardware tunables
-BOARD_HARDWARE_CLASS := device/samsung/galaxysl/cmhw
 
 # Allow device to sleep during charging
 BOARD_CHARGER_ENABLE_SUSPEND := true
@@ -119,9 +112,6 @@ BOARD_USES_GENERIC_AUDIO := false
 BOARD_HAVE_FM_RADIO := true
 BOARD_GLOBAL_CFLAGS += -DHAVE_FM_RADIO
 BOARD_FM_DEVICE := si4709
-
-# Hardware
-BOARD_HARDWARE_CLASS := device/samsung/galaxysl/cmhw
 
 # Wifi related defines
 USES_TI_MAC80211 := true

@@ -136,12 +136,6 @@ PRODUCT_PACKAGES += \
     utility_make_ext4fs \
     make_ext4fs
 
-# Support for Browser's saved page feature. This allows
-# for pages saved on previous versions of the OS to be
-# viewed on the current OS.
-PRODUCT_PACKAGES += \
-    libskia_legacy
-
 # Audio
 PRODUCT_PACKAGES += \
 	libaudioutils audio.a2dp.default \
@@ -211,12 +205,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # PowerVR graphics driver configuration
 PRODUCT_COPY_FILES += \
    $(LOCAL_PATH)/etc/powervr.ini:system/etc/powervr.ini
-
-# Support for Browser's saved page feature. This allows
-# for pages saved on previous versions of the OS to be
-# viewed on the current OS.
-PRODUCT_PACKAGES += \
-    libskia_legacy
 	
 # These are the hardware-specific settings that are stored in system properties.
 # Note that the only such settings should be the ones that are too low-level to
