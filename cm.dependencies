@@ -1,11 +1,8 @@
 [
     {
-		"repository": "android_kernel_samsung_latona",
-        "target_path": "kernel/samsung/latona",
-    },
-    {
-        "repository": "android_packages_apps_SamsungServiceMode",
-        "target_path": "packages/apps/SamsungServiceMode"
+        "repository": "android_external_bluetooth_bluedroid",
+        "target_path": "external/bluetooth/bluedroid",
+        "branch": "cm-10.1"
     },
 	{
 		"repository": "android_packages_apps_droidwall",

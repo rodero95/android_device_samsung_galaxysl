@@ -8,7 +8,7 @@ $(MASTER_BOOTSTRAP): $(INSTALLED_RAMDISK_TARGET) $(recovery_ramdisk) $(PRODUCT_O
 	cd $(PRODUCT_OUT)/recovery/root/; chmod 0644 *.rc default.prop; find . | cpio -o -H newc | gzip > ../../bootstrap/ramdisk-recovery.cpio.gz
 	cd $(PRODUCT_OUT)/bootstrap/; find . | cpio -o -H newc | gzip > ../bootstrap.cpio.gz
 
-INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/android-boot.img
 $(INSTALLED_BOOTIMAGE_TARGET): $(TARGET_PREBUILT_KERNEL) $(MASTER_BOOTSTRAP)
 	$(call pretty,"Boot image: $@")
 	$(HOST_OUT)/bin/mkbootimg --kernel $(PRODUCT_OUT)/kernel --ramdisk $(MASTER_BOOTSTRAP) --cmdline "$(BOARD_KERNEL_CMDLINE)" --base $(BOARD_KERNEL_BASE) --pagesize $(BOARD_KERNEL_PAGESIZE) --output $@
