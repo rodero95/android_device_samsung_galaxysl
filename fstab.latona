@@ -3,16 +3,5 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-# Recovery mount points
-boot                    /boot         mtd        defaults                                               recoveryonly
-recovery                /recovery     mtd        defaults                                               recoveryonly
-radio                   /radio        mtd        defaults                                               recoveryonly
-system                  /system       yaffs2     defaults                                               recoveryonly
-
-# Vold managed mount points
-/dev/block/mmcblk0p2    /cache      ext4    noatime,nosuid,nodev,errors=panic    wait,check
-/dev/block/mmcblk0p3    /data      ext4    noatime,nosuid,nodev,errors=panic,discard,noauto_da_alloc    wait,check
-
-/devices/platform/omap/omap_hsmmc.1/mmc_host/mmc0    auto    auto		defaults		voldmanaged=sdcard0:1,nonremovable
-/devices/platform/omap/omap_hsmmc.0/mmc_host/mmc1    auto    auto		defaults		voldmanaged=sdcard1:auto
-
+/dev/block/mmcblk0p2    /cache        ext4       noatime,nosuid,nodev,noauto_da_alloc,errors=panic      wait
+/dev/block/mmcblk0p3    /data         ext4       noatime,noauto_da_alloc,errors=panic      wait

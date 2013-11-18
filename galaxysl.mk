@@ -15,7 +15,9 @@
 # These are the hardware-specific configuration files
 PRODUCT_COPY_FILES := \
 	device/samsung/galaxysl/etc/gps.conf:system/etc/gps.conf \
-	device/samsung/galaxysl/etc/gps.xml:system/vendor/etc/gps.xml
+	device/samsung/galaxysl/etc/gps.xml:system/vendor/etc/gps.xml \
+	device/samsung/galaxysl/etc/vold.fstab:system/etc/vold.fstab \
+	device/samsung/galaxysl/etc/ubuntu-session.d/galaxysl.conf:system/etc/ubuntu-session.d/galaxysl.conf
 
 # Init files
 PRODUCT_COPY_FILES += \
@@ -122,8 +124,7 @@ PRODUCT_PACKAGES := \
     libbt-vendor \
     bootmenu_busybox \
     SamsungServiceMode \
-    hostapd.conf \
-    Droidwall
+    hostapd.conf
 
 # Charger
 PRODUCT_PACKAGES += \
