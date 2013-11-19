@@ -23,3 +23,6 @@ ro.bq.gpu_to_cpu_unsupported=1
 
 # Disable the preload of the EGL drivers in Zygote at boot time
 ro.zygote.disable_gl_preload=true
+
+#Low RAM device
+ro.config.low_ram=true
