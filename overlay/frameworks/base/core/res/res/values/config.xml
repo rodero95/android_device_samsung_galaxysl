@@ -34,7 +34,8 @@
 
 	<!-- Whether a software navigation bar should be shown. NOTE: in the future this may be
          autodetected from the Configuration. -->
-    <bool name="config_showNavigationBar">true</bool>
+	<!-- Disabled as of kitkat until Expanded Desktop is reimplemented on cm-11.0
+    <bool name="config_showNavigationBar">true</bool> -->
 	
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N + 1 zones as follows:
