@@ -25,4 +25,4 @@ ro.bq.gpu_to_cpu_unsupported=1
 ro.zygote.disable_gl_preload=true
 
 #Low RAM device
-ro.config.low_ram=true
+ro.config.low_ram=false
