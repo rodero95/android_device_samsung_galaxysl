@@ -199,6 +199,13 @@ PRODUCT_PACKAGES += \
 # address
 PRODUCT_PACKAGES += store-mac-addr.sh
 
+# WIFI Firmwares
+PRODUCT_PACKAGES += \
+    wl127x-fw-4-sr.bin \
+    wl127x-fw-4-mr.bin \
+    wl127x-fw-4-plt.bin \
+    wl1271-nvs_127x.bin
+
 # device specific overlays
 DEVICE_PACKAGE_OVERLAYS += device/samsung/galaxysl/overlay
 
@@ -233,6 +240,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
        ro.hwui.disable_scissor_opt=true
 
+# GPU Producer to CPU Consumer
+PRODUCT_PROPERTY_OVERRIDES += \
+       ro.bq.gpu_to_cpu_unsupported=1
+
+# Low RAM Device
+PRODUCT_PROPERTY_OVERRIDES += \
+       ro.config.low_ram=false
+
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -249,7 +264,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.vold.umsdirtyratio=20
 
 # Vold
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.usb.config=mass_storage
+
 PRODUCT_PROPERTY_OVERRIDES += \
+	ro.vold.switchablepair=/storage/sdcard0,/storage/sdcard1
 	ro.additionalmounts=/storage/sdcard1
 
 # Disable SELinux on boot
