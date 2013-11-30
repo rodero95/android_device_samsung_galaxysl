@@ -11,3 +11,6 @@ ro.zram.default=0
 
 # Disable the preload of the EGL drivers in Zygote at boot time
 ro.zygote.disable_gl_preload=true
+
+# Set Galaxy SL release
+ro.galaxysl.release=Development
