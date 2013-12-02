@@ -122,7 +122,8 @@ PRODUCT_PACKAGES := \
     libbt-vendor \
     bootmenu_busybox \
     SamsungServiceMode \
-    hostapd.conf
+    hostapd.conf \
+    Droidwall
 
 # Charger
 PRODUCT_PACKAGES += \
